@@ -58,6 +58,32 @@ class CarController():
     self.angle_limit_counter = 0
     self.cut_steer_frames = 0
     self.cut_steer = False
+    self.frame = 0
+
+  def create_scc13(self, CS):
+    values = {
+      "SCC13_Fusion": 1,
+      "ACCMode": 1,
+      "MainMode": 1,
+      "ObjValid": 1,
+      "ObjGap": 2,
+      "ObjRelSpd": 0,
+      "ObjRelDist": 10,
+      "CRC": 0,  # 실제 CRC 계산 로직 추가 가능
+      "Counter": (self.frame // 20) % 0xF,
+    }
+    return self.packer.make_can_msg("SCC13", 2, values)
+
+  def update(self, CC, CS, now_nanos):
+    can_sends = []
+    self.frame += 1
+
+    if self.frame % 20 == 0 and getattr(CS, 'has_scc13', False):
+      can_sends.append(self.create_scc13(CS))
+
+    return can_sends
+
+
 
     self.apply_steer_last = 0
     self.car_fingerprint = CP.carFingerprint
