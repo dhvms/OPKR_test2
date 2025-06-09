@@ -69,7 +69,7 @@ class CarController():
       "ObjGap": 2,
       "ObjRelSpd": 0,
       "ObjRelDist": 10,
-      "CRC": 0,  # 실제 CRC 계산 로직 추가 가능
+      "CRC": 0,
       "Counter": (self.frame // 20) % 0xF,
     }
     return self.packer.make_can_msg("SCC13", 2, values)
@@ -79,7 +79,7 @@ class CarController():
     self.frame += 1
 
     if self.frame % 20 == 0 and getattr(CS, 'has_scc13', False):
-      can_sends.append(self.create_scc13(CS))
+      can_sends.append(self.create_scc13(CS))  # ✅ 이 줄이 핵심
 
     return can_sends
 
